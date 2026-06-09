@@ -692,7 +692,17 @@ git push origin main
 # 6. Verify: curl http://<EC2_PUBLIC_IP>:8000
 ```
 
-> **Coming next:** Full sample projects (`python-app`, `nodejs-app`, `java-app`) with Dockerfiles and complete `ci-cd.yml` workflows will be added in `sample-projects/` after review.
+### Sample projects (ready to use)
+
+Full end-to-end projects are in `sample-projects/`:
+
+| Project | Port | Folder |
+|---------|------|--------|
+| Python Flask | 8000 | [`sample-projects/python-app/`](sample-projects/python-app/) |
+| Node.js Express | 3000 | [`sample-projects/nodejs-app/`](sample-projects/nodejs-app/) |
+| Java Maven | 8080 | [`sample-projects/java-app/`](sample-projects/java-app/) |
+
+Each includes app code, `Dockerfile`, `.github/workflows/ci-cd.yml`, and a step-by-step README.
 
 ---
 
@@ -1045,4 +1055,4 @@ Step 18 → WSGI deployment           (Section 23, sample project)
 
 ---
 
-*Tutorial for educational purposes. Sample projects (`sample-projects/`) coming in the next deliverable.*
+*Tutorial for educational purposes. Docker sample projects available in [`sample-projects/`](sample-projects/).*
