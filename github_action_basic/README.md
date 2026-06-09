@@ -698,11 +698,12 @@ Full end-to-end projects are in `sample-projects/`:
 
 | Project | Port | Folder |
 |---------|------|--------|
-| Python Flask | 8000 | [`sample-projects/python-app/`](sample-projects/python-app/) |
-| Node.js Express | 3000 | [`sample-projects/nodejs-app/`](sample-projects/nodejs-app/) |
-| Java Maven | 8080 | [`sample-projects/java-app/`](sample-projects/java-app/) |
+| Python Flask (Docker) | 8000 | [`sample-projects/python-app/`](sample-projects/python-app/) |
+| Node.js Express (Docker) | 3000 | [`sample-projects/nodejs-app/`](sample-projects/nodejs-app/) |
+| Java Maven (Docker) | 8080 | [`sample-projects/java-app/`](sample-projects/java-app/) |
+| Python WSGI (Self-Hosted) | 8000 | [`sample-projects/python-wsgi-self-hosted-runner/`](sample-projects/python-wsgi-self-hosted-runner/) |
 
-Each includes app code, `Dockerfile`, `.github/workflows/ci-cd.yml`, and a step-by-step README.
+Docker projects include `Dockerfile` and `ci-cd.yml`. The WSGI project uses Gunicorn + systemd + self-hosted runner.
 
 ---
 
@@ -899,7 +900,7 @@ Verify in GitHub: **Settings → Actions → Runners** — status should show **
 
 ## 23. Non-Docker Python Deployment with WSGI
 
-> **Coming next:** Full sample project at `sample-projects/python-wsgi-self-hosted-runner/` will be added after review. Below is the concept and flow.
+Full sample project: [`sample-projects/python-wsgi-self-hosted-runner/`](sample-projects/python-wsgi-self-hosted-runner/)
 
 For some teams, Docker is not used. Instead, Python apps deploy with **Gunicorn** (WSGI server) behind **Nginx**.
 
