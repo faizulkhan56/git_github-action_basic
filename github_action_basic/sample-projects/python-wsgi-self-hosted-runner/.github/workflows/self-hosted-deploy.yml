@@ -25,14 +25,26 @@ jobs:
       - name: Checkout latest code
         uses: actions/checkout@v4
 
-      - name: Show current directory and files
+      - name: Show runner checkout directory
         run: |
-          echo "=== Runner working directory ==="
+          echo "=== Runner checkout directory ==="
           pwd
           ls -la
 
+      # Runner checks out to _work/ folder, but systemd uses a fixed app path.
+      # Sync code to the path Gunicorn expects (must match gunicorn.service.example).
+      - name: Sync code to application directory
+        run: |
+          APP_DIR=/home/ubuntu/python-wsgi-self-hosted-runner
+          mkdir -p "$APP_DIR"
+          cp -f app.py requirements.txt gunicorn.service.example "$APP_DIR/"
+          echo "Synced application files to $APP_DIR"
+          ls -la "$APP_DIR"
+
       - name: Create or update Python virtual environment
         run: |
+          APP_DIR=/home/ubuntu/python-wsgi-self-hosted-runner
+          cd "$APP_DIR"
           if [ ! -d "venv" ]; then
             echo "Creating new virtual environment..."
             python3 -m venv venv
@@ -40,7 +52,7 @@ jobs:
           source venv/bin/activate
           pip install --upgrade pip
           pip install -r requirements.txt
-          echo "Dependencies installed successfully."
+          echo "Dependencies installed in $APP_DIR/venv"
 
       - name: Restart Gunicorn systemd service
         run: |

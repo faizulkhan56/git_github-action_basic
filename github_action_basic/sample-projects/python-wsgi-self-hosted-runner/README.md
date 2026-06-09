@@ -1,5 +1,9 @@
 # Python WSGI Self-Hosted Runner Deployment
 
+> **Phase 3** — Do after completing at least one Phase 2 Docker project.  
+> **Master guide:** [`../../README.md`](../../README.md) Sections 21–23 for theory.  
+> **This folder = its own GitHub repository** with self-hosted runner on EC2.
+
 Deploy a **Flask** application to AWS EC2 **without Docker** using a **GitHub Actions self-hosted runner**, **Gunicorn**, and **systemd**.
 
 | Item | Value |
@@ -422,26 +426,9 @@ source venv/bin/activate
 gunicorn --workers 2 --bind 0.0.0.0:8000 app:app
 ```
 
-### Runner work directory note
+### How code reaches Gunicorn
 
-The self-hosted runner checks out code to its `_work` folder (e.g. `/home/ubuntu/actions-runner/_work/repo-name/repo-name/`). The systemd service points to `/home/ubuntu/python-wsgi-self-hosted-runner/`.
-
-**For production**, either:
-
-- Configure the runner service `WorkingDirectory` in systemd to match the runner's checkout path, **or**
-- Add a deploy step that copies/syncs code from the runner work dir to `/home/ubuntu/python-wsgi-self-hosted-runner/`
-
-For this tutorial, clone the repo to `/home/ubuntu/python-wsgi-self-hosted-runner` and configure the runner to use that path, or update `gunicorn.service.example` `WorkingDirectory` to match where the runner checks out code.
-
-**Simplest approach for students:** After runner setup, symlink or ensure the runner checks out to the app directory:
-
-```bash
-# Option: clone repo to standard path; runner will checkout over it on each job
-cd /home/ubuntu
-git clone https://github.com/<your-username>/python-wsgi-self-hosted-runner.git
-```
-
-The workflow runs steps in the checkout directory. Update `gunicorn.service.example` `WorkingDirectory` to the runner's actual checkout path if different.
+The self-hosted runner checks out code to its `_work/` folder, but systemd runs Gunicorn from `/home/ubuntu/python-wsgi-self-hosted-runner/`. The workflow **syncs** `app.py` and `requirements.txt` to that fixed path before updating the venv and restarting the service. Do not change `WorkingDirectory` in `gunicorn.service.example` unless you also update the workflow sync path.
 
 ---
 

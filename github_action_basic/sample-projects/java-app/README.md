@@ -1,6 +1,10 @@
 # Java Basic App — Docker CI/CD to AWS EC2
 
-A minimal **Java HTTP server** (Maven) for learning GitHub Actions CI/CD. Treat this folder as its own GitHub repository.
+> **Phase 2c** — Do after Phase 2a or 2b.  
+> **Prerequisites:** Phase 1 complete — see master guide [`../../README.md`](../../README.md).  
+> **This folder = its own GitHub repository.**
+
+A minimal **Java HTTP server** (Maven) for learning GitHub Actions CI/CD.
 
 | Item | Value |
 |------|-------|

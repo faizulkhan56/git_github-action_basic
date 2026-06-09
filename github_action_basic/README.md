@@ -1,47 +1,107 @@
 # GitHub Actions Basic Tutorial
 
-> **For students:** This tutorial teaches GitHub Actions from zero. Work through each workflow example in order (`01` → `16`). Copy any workflow into your repo at `.github/workflows/` to run it.
+> **This is your single master guide.** Read top to bottom in three phases. Do not skip ahead — each phase builds on the previous one.
 >
-> **Prerequisite:** Complete the Git & GitHub basics in the sibling folder [`../git_basic/`](../git_basic/).
+> **Prerequisite:** Complete Git & GitHub basics in [`../git_basic/`](../git_basic/) first.
 
 ---
 
-## How to Use This Tutorial
+## Master Learning Roadmap — Start Here
+
+Follow this exact order:
+
+| Phase | What you learn | Where to work | When to start |
+|-------|---------------|---------------|---------------|
+| **Phase 1** | GitHub Actions concepts + 16 workflow examples | [`workflows/`](workflows/) + Sections 1–17 below | **Start here** |
+| **Phase 2** | Real Docker CI/CD deploy to AWS EC2 | [`sample-projects/`](sample-projects/) — pick one app | After completing Phase 1 through workflow `16` |
+| **Phase 3** | Self-hosted runner + WSGI deploy (no Docker) | [`sample-projects/python-wsgi-self-hosted-runner/`](sample-projects/python-wsgi-self-hosted-runner/) | After completing at least one Phase 2 project |
+
+```mermaid
+flowchart TD
+    A[Phase 0: git_basic README] --> B[Phase 1: workflows 01-16]
+    B --> C[Phase 2: sample-projects Docker deploy]
+    C --> D[Phase 3: self-hosted WSGI deploy]
+    C --> C1[python-app :8000]
+    C --> C2[nodejs-app :3000]
+    C --> C3[java-app :8080]
+    D --> D1[python-wsgi-self-hosted-runner]
+```
+
+### Phase 1 — Learning repo setup (one GitHub repo for all 16 workflows)
+
+Create a repo called `github-actions-learning` (or similar). Copy workflows one at a time:
+
+```bash
+# Git Bash — from inside github_action_basic/
+cd /c/faizul-personal/ntech/module-3/git_githubaction_basic/github_action_basic
+
+# Create your learning repo (first time only)
+mkdir ~/github-actions-learning && cd ~/github-actions-learning
+git init
+git remote add origin https://github.com/<your-username>/github-actions-learning.git
+
+# Example: add workflow 01
+mkdir -p .github/workflows
+cp ../github_action_basic/workflows/01-hello-world.yml .github/workflows/
+git add .github/workflows/01-hello-world.yml
+git commit -m "Add workflow 01 hello world"
+git push -u origin main
+```
+
+Then: GitHub → **Actions** → select workflow → **Run workflow** (for manual triggers).
+
+> **Rule:** Files in `workflows/` are study copies. GitHub only runs files inside `.github/workflows/` at the **root of your repo**.
+
+### Phase 2 — Sample Docker project (separate GitHub repo per app)
+
+Pick **one** project first (recommend `python-app` for beginners):
+
+| Order | Project | Port | Open this README |
+|-------|---------|------|------------------|
+| 2a | Python Flask | 8000 | [`sample-projects/python-app/README.md`](sample-projects/python-app/README.md) |
+| 2b | Node.js Express | 3000 | [`sample-projects/nodejs-app/README.md`](sample-projects/nodejs-app/README.md) |
+| 2c | Java Maven | 8080 | [`sample-projects/java-app/README.md`](sample-projects/java-app/README.md) |
+
+Each sample project is a **standalone repo** — copy the entire folder, push to its own GitHub repo, configure secrets, deploy to EC2. Follow that project's README step by step.
+
+### Phase 3 — Self-hosted runner project (separate GitHub repo + EC2)
+
+After Phase 2, open [`sample-projects/python-wsgi-self-hosted-runner/README.md`](sample-projects/python-wsgi-self-hosted-runner/README.md) and follow Sections 1–12 in order.
+
+---
+
+## Full Folder Map
 
 ```
 github_action_basic/
-├── README.md              ← You are here (full theory + explanations)
-└── workflows/
-    ├── 01-hello-world.yml
-    ├── 02-job-step-run.yml
-    ├── ...
-    └── 16-ec2-docker-deploy-basic.yml
+├── README.md                    ← Master guide (you are here)
+├── workflows/                   ← Phase 1: copy these to your learning repo
+│   ├── 01-hello-world.yml
+│   ├── ...
+│   └── 16-ec2-docker-deploy-basic.yml
+└── sample-projects/             ← Phase 2 and Phase 3
+    ├── python-app/              ← Phase 2a (Docker → EC2)
+    ├── nodejs-app/              ← Phase 2b (Docker → EC2)
+    ├── java-app/                ← Phase 2c (Docker → EC2)
+    └── python-wsgi-self-hosted-runner/  ← Phase 3 (WSGI, no Docker)
 ```
-
-**Important:** Workflow files in `workflows/` are **learning examples**. GitHub only runs workflows inside `.github/workflows/` at the **root of your repository**. To test a workflow:
-
-```bash
-# In your GitHub repo (Git Bash on Windows)
-mkdir -p .github/workflows
-cp workflows/01-hello-world.yml .github/workflows/
-git add .github/workflows/01-hello-world.yml
-git commit -m "Add hello world workflow"
-git push origin main
-```
-
-Then go to your repo on GitHub → **Actions** tab → select the workflow → **Run workflow**.
 
 ---
 
 ## Table of Contents
 
+### Concepts (read before Phase 1 workflows)
+
 1. [What is GitHub Actions?](#1-what-is-github-actions)
 2. [Why do we use GitHub Actions?](#2-why-do-we-use-github-actions)
 3. [GitHub Actions Core Terms](#3-github-actions-core-terms)
 4. [Basic Workflow Structure](#4-basic-workflow-structure)
-5. [Workflow Example 01: Hello World](#5-workflow-example-01-hello-world)
-6. [Workflow Example 02: Job, Step, Run](#6-workflow-example-02-job-step-run)
-7. [Workflow Example 03: Using Marketplace Actions](#7-workflow-example-03-using-marketplace-actions)
+
+### Phase 1 — Workflow Examples (Sections 5–17 → files `01`–`16`)
+
+5. [Workflow 01: Hello World](#5-workflow-example-01-hello-world)
+6. [Workflow 02: Job, Step, Run](#6-workflow-example-02-job-step-run)
+7. [Workflow 03: Marketplace Actions](#7-workflow-example-03-using-marketplace-actions)
 8. [Environment Variables](#8-environment-variables)
 9. [Repository Variables](#9-repository-variables)
 10. [Secrets](#10-secrets)
@@ -52,12 +112,21 @@ Then go to your repo on GitHub → **Actions** tab → select the workflow → *
 15. [Node.js CI Example](#15-nodejs-ci-example)
 16. [Java CI Example](#16-java-ci-example)
 17. [Docker Build Basic](#17-docker-build-basic)
+
+### Phase 2 — Docker Deploy to EC2 (Section 18–20 + sample-projects)
+
 18. [End-to-End Dockerized CI/CD to AWS EC2](#18-end-to-end-dockerized-cicd-to-aws-ec2)
 19. [Required GitHub Secrets for EC2 Docker Deployment](#19-required-github-secrets-for-ec2-docker-deployment)
 20. [AWS EC2 Basic Setup](#20-aws-ec2-basic-setup)
+
+### Phase 3 — Self-Hosted Runner + WSGI (Section 21–23)
+
 21. [Self-Hosted Runner](#21-self-hosted-runner)
 22. [Self-Hosted Runner Setup on AWS EC2](#22-self-hosted-runner-setup-on-aws-ec2)
 23. [Non-Docker Python Deployment with WSGI](#23-non-docker-python-deployment-with-wsgi)
+
+### Practice and Reference
+
 24. [Student Practice Tasks](#24-student-practice-tasks)
 25. [Final Learning Path](#25-final-learning-path)
 
@@ -182,6 +251,8 @@ jobs:                           # One or more jobs
 
 ---
 
+> **Start Phase 1 now:** Sections 5–17 map to workflow files `01`–`16`. Copy one workflow at a time into your learning repo.
+
 ## 5. Workflow Example 01: Hello World
 
 **File:** [`workflows/01-hello-world.yml`](workflows/01-hello-world.yml)
@@ -206,9 +277,9 @@ jobs:
         run: echo "Hello from GitHub Actions"
 ```
 
-**How to test:**
+**How to test (Phase 1, Step 01):**
 
-1. Copy file to `.github/workflows/` in your repo
+1. Copy [`workflows/01-hello-world.yml`](workflows/01-hello-world.yml) to `.github/workflows/` in your **learning repo**
 2. Push to GitHub
 3. Go to **Actions** → **Hello World Workflow** → **Run workflow**
 
@@ -644,9 +715,10 @@ The workflow builds the image, runs it, tests with `curl`, then stops it — all
 
 ## 18. End-to-End Dockerized CI/CD to AWS EC2
 
-**File:** [`workflows/16-ec2-docker-deploy-basic.yml`](workflows/16-ec2-docker-deploy-basic.yml)
+> **You are now in Phase 2.** Complete Phase 1 (workflows `01`–`16`) before starting here.
 
-This is the full deployment pipeline students will practice with real sample projects.
+**Study workflow:** [`workflows/16-ec2-docker-deploy-basic.yml`](workflows/16-ec2-docker-deploy-basic.yml)  
+**Production-ready projects:** [`sample-projects/`](sample-projects/) — use these for real deployment practice.
 
 ```mermaid
 flowchart LR
@@ -657,53 +729,61 @@ flowchart LR
     E --> F[docker pull]
     F --> G[Stop old container]
     G --> H[Run new container]
-    H --> I[curl verify :8000]
+    H --> I[curl verify app port]
 ```
 
-### Two jobs in the workflow
+### Two jobs in every Docker deploy workflow
 
 | Job | Purpose |
 |-----|---------|
 | `build-and-push` | Build image, login to DockerHub, push image |
 | `deploy-to-ec2` | SSH to EC2, pull image, restart container |
 
-### Full student flow (Git Bash on Windows)
+### Where to start Phase 2 — step by step
+
+**Recommended first project:** [`sample-projects/python-app/`](sample-projects/python-app/)
 
 ```bash
-# 1. Create project locally (sample projects coming in next module)
-mkdir my-python-app && cd my-python-app
+# Git Bash on Windows
+cd /c/faizul-personal/ntech/module-3/git_githubaction_basic/github_action_basic/sample-projects/python-app
 
-# 2. Initialize Git
+# 1. Test locally (optional)
+python -m venv venv && source venv/Scripts/activate
+pip install -r requirements.txt && python app.py
+# Ctrl+C to stop
+
+# 2. Test Docker locally (optional)
+docker build -t python-basic-app .
+docker run -d -p 8000:8000 --name python-basic-app python-basic-app
+curl http://localhost:8000/health
+docker stop python-basic-app && docker rm python-basic-app
+
+# 3. Push to its OWN GitHub repo (not the learning repo)
 git init
 git add .
-git commit -m "Initial commit"
+git commit -m "Initial commit: Python Docker CI/CD app"
+git branch -M main
+git remote add origin https://github.com/<your-username>/python-basic-app.git
+git push -u origin main
 
-# 3. Create GitHub repo (via browser or gh CLI)
-gh repo create my-python-app --public --source=. --push
-
-# 4. Add workflow
-mkdir -p .github/workflows
-cp 16-ec2-docker-deploy-basic.yml .github/workflows/deploy.yml
-git add .github/workflows/deploy.yml
-git commit -m "Add EC2 deploy workflow"
-git push origin main
-
-# 5. Configure secrets in GitHub (see Section 19)
-# 6. Verify: curl http://<EC2_PUBLIC_IP>:8000
+# 4. Configure EC2 + secrets (Sections 19 and 20)
+# 5. Push triggers .github/workflows/ci-cd.yml automatically
+# 6. Verify: curl http://<EC2_PUBLIC_IP>:8000/health
 ```
 
-### Sample projects (ready to use)
+> The workflow `ci-cd.yml` is **already inside** each sample project. You do not need to copy workflow `16` separately — the sample project workflow is production-ready.
 
-Full end-to-end projects are in `sample-projects/`:
+### Phase 2 sample projects
 
-| Project | Port | Folder |
-|---------|------|--------|
-| Python Flask (Docker) | 8000 | [`sample-projects/python-app/`](sample-projects/python-app/) |
-| Node.js Express (Docker) | 3000 | [`sample-projects/nodejs-app/`](sample-projects/nodejs-app/) |
-| Java Maven (Docker) | 8080 | [`sample-projects/java-app/`](sample-projects/java-app/) |
-| Python WSGI (Self-Hosted) | 8000 | [`sample-projects/python-wsgi-self-hosted-runner/`](sample-projects/python-wsgi-self-hosted-runner/) |
+| Start order | Project | Port | EC2 security group | Project README |
+|-------------|---------|------|-------------------|----------------|
+| **2a (start here)** | Python Flask | 8000 | Open TCP 8000 | [`python-app/README.md`](sample-projects/python-app/README.md) |
+| 2b | Node.js Express | 3000 | Open TCP 3000 | [`nodejs-app/README.md`](sample-projects/nodejs-app/README.md) |
+| 2c | Java Maven | 8080 | Open TCP 8080 | [`java-app/README.md`](sample-projects/java-app/README.md) |
 
-Docker projects include `Dockerfile` and `ci-cd.yml`. The WSGI project uses Gunicorn + systemd + self-hosted runner.
+Each project folder contains: app code, `Dockerfile`, `.github/workflows/ci-cd.yml`, and a full README with EC2 setup, secrets, and troubleshooting.
+
+> **Phase 3** (`python-wsgi-self-hosted-runner`) is a different deploy model — do it after Phase 2, not in parallel.
 
 ---
 
@@ -751,7 +831,7 @@ Launch an Ubuntu EC2 instance and install Docker.
 | AMI | Ubuntu Server 22.04 LTS |
 | Instance type | `t2.micro` (free tier) |
 | Key pair | Create new → download `.pem` |
-| Security group | Allow SSH (22), HTTP (80), Custom TCP (8000) |
+| Security group | SSH (22) + your app port (8000 Python / 3000 Node / 8080 Java) |
 
 ### Step 2 — Connect via SSH (Git Bash on Windows)
 
@@ -786,19 +866,20 @@ docker ps
 
 ### Step 4 — Verify deployment port
 
-After GitHub Actions deploys:
+After GitHub Actions deploys, use the port for your project:
 
-```bash
-# On EC2
-curl http://localhost:8000
-
-# From your laptop (Git Bash)
-curl http://<EC2_PUBLIC_IP>:8000
-```
+| Project | curl on EC2 | curl from laptop |
+|---------|-------------|------------------|
+| python-app | `curl http://localhost:8000/health` | `curl http://<EC2_IP>:8000/health` |
+| nodejs-app | `curl http://localhost:3000/health` | `curl http://<EC2_IP>:3000/health` |
+| java-app | `curl http://localhost:8080/health` | `curl http://<EC2_IP>:8080/health` |
 
 ---
 
 ## 21. Self-Hosted Runner
+
+> **You are now in Phase 3.** Complete Phase 2 (at least one Docker sample project) before starting here.  
+> **Start here:** [`sample-projects/python-wsgi-self-hosted-runner/README.md`](sample-projects/python-wsgi-self-hosted-runner/README.md)
 
 ### What is a self-hosted runner?
 
@@ -929,18 +1010,22 @@ flowchart LR
 
 ### Gunicorn systemd service example
 
+See full file: [`sample-projects/python-wsgi-self-hosted-runner/gunicorn.service.example`](sample-projects/python-wsgi-self-hosted-runner/gunicorn.service.example)
+
 ```ini
-# /etc/systemd/system/gunicorn.service
+# /etc/systemd/system/python-wsgi-app.service
 [Unit]
-Description=Gunicorn instance for student Flask app
+Description=Gunicorn instance for python-wsgi-self-hosted-runner
 After=network.target
 
 [Service]
 User=ubuntu
 Group=ubuntu
-WorkingDirectory=/home/ubuntu/app
-Environment="PATH=/home/ubuntu/app/venv/bin"
-ExecStart=/home/ubuntu/app/venv/bin/gunicorn --workers 3 --bind 0.0.0.0:8000 app:app
+WorkingDirectory=/home/ubuntu/python-wsgi-self-hosted-runner
+Environment="PATH=/home/ubuntu/python-wsgi-self-hosted-runner/venv/bin"
+ExecStart=/home/ubuntu/python-wsgi-self-hosted-runner/venv/bin/gunicorn \
+  --workers 2 --bind 0.0.0.0:8000 app:app
+Restart=always
 
 [Install]
 WantedBy=multi-user.target
@@ -948,18 +1033,9 @@ WantedBy=multi-user.target
 
 ### Deploy workflow (self-hosted)
 
-```yaml
-jobs:
-  deploy:
-    runs-on: self-hosted
-    steps:
-      - uses: actions/checkout@v4
-      - run: |
-          python3 -m venv venv
-          source venv/bin/activate
-          pip install -r requirements.txt
-          sudo systemctl restart gunicorn
-```
+File: [`sample-projects/python-wsgi-self-hosted-runner/.github/workflows/self-hosted-deploy.yml`](sample-projects/python-wsgi-self-hosted-runner/.github/workflows/self-hosted-deploy.yml)
+
+Key steps: checkout → sync code to `/home/ubuntu/python-wsgi-self-hosted-runner` → update venv → `systemctl restart python-wsgi-app` → curl `/health`
 
 ---
 
@@ -979,37 +1055,55 @@ Complete these exercises in order. Each builds on the previous.
 - [ ] **Task 5:** Copy `08-push-trigger.yml` and `09-pull-request-trigger.yml`. Push a branch, open a PR, watch both workflows run.
 - [ ] **Task 6:** Copy `12-python-basic-ci.yml`. Modify the test to fail. Push and observe red X on commit.
 
-### Advanced
+### Phase 2 — Docker deploy
 
-- [ ] **Task 7:** Launch AWS EC2, install Docker, configure all 5 secrets, deploy with `16-ec2-docker-deploy-basic.yml`. Verify with `curl`.
-- [ ] **Task 8:** Set up a self-hosted runner on EC2. Create a workflow with `runs-on: self-hosted`.
-- [ ] **Task 9:** Deploy a Python app with Gunicorn + systemd (after sample project is available).
+- [ ] **Task 7:** Deploy [`python-app`](sample-projects/python-app/) to EC2. Configure all 5 secrets. Verify `curl http://<EC2_IP>:8000/health`.
+- [ ] **Task 8:** Deploy [`nodejs-app`](sample-projects/nodejs-app/) or [`java-app`](sample-projects/java-app/). Compare workflow differences.
+
+### Phase 3 — Self-hosted WSGI
+
+- [ ] **Task 9:** Follow [`python-wsgi-self-hosted-runner/README.md`](sample-projects/python-wsgi-self-hosted-runner/README.md) — register runner, setup systemd, push to deploy.
+- [ ] **Task 10:** Add optional Nginx reverse proxy. Access app on port 80.
 
 ---
 
 ## 25. Final Learning Path
 
-Follow this sequence for the best learning experience:
+### Phase 1 — Workflows (learning repo: `github-actions-learning`)
 
 ```
-Step 1  → 01-hello-world.yml         (first workflow, manual trigger)
-Step 2  → 02-job-step-run.yml       (jobs, steps, needs)
-Step 3  → 03-uses-marketplace-action.yml  (checkout action)
-Step 4  → 04-env-variable.yml       (env at 3 levels)
-Step 5  → 05-repository-variable.yml (vars.APP_ENV)
-Step 6  → 06-secret-variable.yml    (secrets, safety rules)
-Step 7  → 07-manual-trigger-input.yml (inputs)
-Step 8  → 08-push-trigger.yml       (auto trigger: push)
-Step 9  → 09-pull-request-trigger.yml (auto trigger: PR)
-Step 10 → 10-schedule-trigger.yml   (cron schedule)
-Step 11 → 11-matrix-build.yml      (matrix strategy)
-Step 12 → 12-python-basic-ci.yml    (Python CI)
-Step 13 → 13-nodejs-basic-ci.yml    (Node.js CI)
-Step 14 → 14-java-basic-ci.yml      (Java CI)
-Step 15 → 15-docker-build-basic.yml (Docker build)
-Step 16 → 16-ec2-docker-deploy-basic.yml (EC2 deploy)
-Step 17 → Self-hosted runner setup  (Section 22)
-Step 18 → WSGI deployment           (Section 23, sample project)
+Step 01 → workflows/01-hello-world.yml
+Step 02 → workflows/02-job-step-run.yml
+Step 03 → workflows/03-uses-marketplace-action.yml
+Step 04 → workflows/04-env-variable.yml
+Step 05 → workflows/05-repository-variable.yml      (create APP_ENV variable first)
+Step 06 → workflows/06-secret-variable.yml          (create DEMO_API_TOKEN secret first)
+Step 07 → workflows/07-manual-trigger-input.yml
+Step 08 → workflows/08-push-trigger.yml
+Step 09 → workflows/09-pull-request-trigger.yml
+Step 10 → workflows/10-schedule-trigger.yml
+Step 11 → workflows/11-matrix-build.yml
+Step 12 → workflows/12-python-basic-ci.yml
+Step 13 → workflows/13-nodejs-basic-ci.yml
+Step 14 → workflows/14-java-basic-ci.yml
+Step 15 → workflows/15-docker-build-basic.yml
+Step 16 → workflows/16-ec2-docker-deploy-basic.yml  (study only — use sample project for real deploy)
+```
+
+### Phase 2 — Docker sample projects (separate repo per app)
+
+```
+Step 17 → sample-projects/python-app/README.md     (recommended first)
+Step 18 → sample-projects/nodejs-app/README.md     (optional)
+Step 19 → sample-projects/java-app/README.md      (optional)
+```
+
+### Phase 3 — Self-hosted WSGI (separate repo)
+
+```
+Step 20 → sample-projects/python-wsgi-self-hosted-runner/README.md
+         → Section 21–23 in this master guide for theory
+         → Section 22 for runner registration on EC2
 ```
 
 ---
@@ -1056,4 +1150,15 @@ Step 18 → WSGI deployment           (Section 23, sample project)
 
 ---
 
-*Tutorial for educational purposes. Docker sample projects available in [`sample-projects/`](sample-projects/).*
+## Sample Project Index
+
+| Phase | Project | README |
+|-------|---------|--------|
+| 2a | Python Docker app | [`sample-projects/python-app/README.md`](sample-projects/python-app/README.md) |
+| 2b | Node.js Docker app | [`sample-projects/nodejs-app/README.md`](sample-projects/nodejs-app/README.md) |
+| 2c | Java Docker app | [`sample-projects/java-app/README.md`](sample-projects/java-app/README.md) |
+| 3 | Python WSGI self-hosted | [`sample-projects/python-wsgi-self-hosted-runner/README.md`](sample-projects/python-wsgi-self-hosted-runner/README.md) |
+
+---
+
+*Tutorial for educational purposes. Follow the [Master Learning Roadmap](#master-learning-roadmap--start-here) in order.*

@@ -1,6 +1,10 @@
 # Node.js Basic App — Docker CI/CD to AWS EC2
 
-A minimal **Express** web application for learning GitHub Actions CI/CD. Treat this folder as its own GitHub repository.
+> **Phase 2b** — Do after [`python-app`](../python-app/) (Phase 2a).  
+> **Prerequisites:** Phase 1 complete — see master guide [`../../README.md`](../../README.md).  
+> **This folder = its own GitHub repository.**
+
+A minimal **Express** web application for learning GitHub Actions CI/CD.
 
 | Item | Value |
 |------|-------|

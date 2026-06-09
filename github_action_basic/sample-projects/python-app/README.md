@@ -1,6 +1,10 @@
 # Python Basic App — Docker CI/CD to AWS EC2
 
-A minimal **Flask** web application for learning GitHub Actions CI/CD. Treat this folder as its own GitHub repository.
+> **Phase 2a** — Start here for Docker deployment practice.  
+> **Prerequisites:** Complete Phase 1 in the master guide [`../../README.md`](../../README.md) (workflows `01`–`16`).  
+> **This folder = its own GitHub repository** (not the Phase 1 learning repo).
+
+A minimal **Flask** web application for learning GitHub Actions CI/CD.
 
 | Item | Value |
 |------|-------|

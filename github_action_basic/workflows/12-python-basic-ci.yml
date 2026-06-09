@@ -28,9 +28,7 @@ jobs:
       - name: Create sample Python app and test (for demo)
         run: |
           mkdir -p app tests
-          cat > app/__init__.py << 'EOF'
-
-          EOF
+          touch app/__init__.py
           cat > app/math_utils.py << 'EOF'
           def add(a, b):
               return a + b
